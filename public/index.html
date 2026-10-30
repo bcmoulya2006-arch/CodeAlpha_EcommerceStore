@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlphaStore — Modern Full Stack E-commerce Store | CodeAlpha Task 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="brand-logo">
+          <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Alpha<span>Store</span></span>
+          <span class="brand-tag">CodeAlpha Task 1</span>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search premium electronics, audio, accessories..." autocomplete="off">
+        <button id="clearSearchBtn" class="clear-search-btn" title="Clear search" style="display: none;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Quick Demo Account Switcher -->
+      <div class="demo-switcher">
+        <span class="demo-label"><i class="fa-solid fa-bolt"></i> Demo User:</span>
+        <select id="demoAccountSelect" title="Select pre-seeded account for instant testing">
+          <option value="manish">Manish Kumar (Buyer)</option>
+          <option value="demo">Alex Carter (Customer)</option>
+          <option value="admin">Admin Manager</option>
+          <option value="guest">Guest (Logged Out)</option>
+        </select>
+      </div>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <!-- Orders Button -->
+        <button id="ordersNavBtn" class="nav-btn" title="My Orders">
+          <i class="fa-solid fa-receipt"></i>
+          <span class="nav-btn-text">Orders</span>
+          <span id="ordersCountBadge" class="nav-badge" style="display: none;">0</span>
+        </button>
+
+        <!-- Cart Button -->
+        <button id="cartNavBtn" class="nav-btn cart-btn" title="Shopping Cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span class="nav-btn-text">Cart</span>
+          <span id="cartCountBadge" class="nav-badge">0</span>
+        </button>
+
+        <!-- User / Auth Button -->
+        <div class="user-menu-wrapper">
+          <button id="authNavBtn" class="nav-btn auth-btn">
+            <i class="fa-regular fa-circle-user"></i>
+            <span id="userNameDisplay">Sign In</span>
+          </button>
+          <div id="userDropdown" class="user-dropdown">
+            <div class="user-dropdown-header">
+              <p class="dropdown-name" id="dropdownUserName">Guest User</p>
+              <p class="dropdown-email" id="dropdownUserEmail">Not signed in</p>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button id="dropdownOrdersBtn" class="dropdown-item">
+              <i class="fa-solid fa-box-open"></i> Order History
+            </button>
+            <button id="dropdownProfileBtn" class="dropdown-item">
+              <i class="fa-solid fa-id-card"></i> Delivery Profile
+            </button>
+            <div class="dropdown-divider"></div>
+            <button id="dropdownLogoutBtn" class="dropdown-item text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Promo Banner -->
+  <section class="hero-banner">
+    <div class="hero-container">
+      <div class="hero-content">
+        <span class="hero-badge"><i class="fa-solid fa-sparkles"></i> CodeAlpha Internship Showcase</span>
+        <h1 class="hero-title">Discover High-Performance Tech & Everyday Gear</h1>
+        <p class="hero-desc">Experience seamless shopping with real-time cart synchronisation, dynamic product filtering, instant checkout, and order lifecycle tracking.</p>
+        
+        <div class="hero-promo-pill">
+          <i class="fa-solid fa-ticket"></i>
+          <span>Use code <strong>CODEALPHA20</strong> at checkout for <strong>20% OFF</strong>!</span>
+          <button class="copy-promo-btn" onclick="copyPromoCode('CODEALPHA20')" title="Copy Coupon">
+            <i class="fa-regular fa-copy"></i>
+          </button>
+        </div>
+
+        <div class="hero-cta-group">
+          <a href="#catalogSection" class="btn btn-primary"><i class="fa-solid fa-arrow-down"></i> Explore Products</a>
+          <button id="heroQuickDemoBtn" class="btn btn-outline"><i class="fa-solid fa-cart-arrow-down"></i> View Sample Order</button>
+        </div>
+      </div>
+      <div class="hero-highlights">
+        <div class="highlight-card">
+          <i class="fa-solid fa-truck-fast"></i>
+          <div>
+            <h4>Free Shipping</h4>
+            <p>On orders above $150</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>
+            <h4>Secure Checkout</h4>
+            <p>JWT & Bcrypt Security</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <i class="fa-solid fa-rotate-left"></i>
+          <div>
+            <h4>Order Management</h4>
+            <p>Live status & cancellations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Store Section -->
+  <main class="main-content" id="catalogSection">
+    <div class="content-container">
+      <!-- Catalog Controls -->
+      <div class="catalog-header">
+        <!-- Categories Pills -->
+        <div class="category-pills" id="categoryPillsContainer">
+          <button class="pill active" data-category="All">All Items</button>
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Sort and Controls -->
+        <div class="catalog-filters">
+          <div class="filter-group">
+            <label for="sortSelect"><i class="fa-solid fa-arrow-down-short-wide"></i> Sort:</label>
+            <select id="sortSelect">
+              <option value="newest">Newest Arrivals</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating-desc">Highest Rated</option>
+              <option value="name-asc">Alphabetical (A-Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Stats & Active Filter Tags -->
+      <div class="results-bar">
+        <span id="resultsCount">Loading products...</span>
+        <button id="resetFiltersBtn" class="reset-link" style="display: none;">Reset Filters</button>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="productsGrid">
+        <!-- Dynamically injected product cards -->
+      </div>
+
+      <!-- Loading / Empty States -->
+      <div id="noProductsFound" class="empty-state" style="display: none;">
+        <i class="fa-solid fa-box-open empty-icon"></i>
+        <h3>No matching products found</h3>
+        <p>Try adjusting your search query or switching categories.</p>
+        <button class="btn btn-outline" onclick="resetAllFilters()">Reset All Filters</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Product Details Modal -->
+  <div id="productModal" class="modal-backdrop">
+    <div class="modal-dialog modal-lg">
+      <button class="modal-close-btn" onclick="closeProductModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="product-modal-content" id="productModalBody">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping Cart Slide-Over Drawer -->
+  <div id="cartDrawer" class="cart-drawer-backdrop">
+    <div class="cart-drawer">
+      <div class="cart-drawer-header">
+        <div class="cart-header-title">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <h3>Your Shopping Cart</h3>
+          <span id="drawerItemCountBadge" class="drawer-count">0 items</span>
+        </div>
+        <button class="cart-close-btn" onclick="toggleCartDrawer(false)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Cart Item List -->
+      <div class="cart-drawer-body" id="cartItemsContainer">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Cart Drawer Footer -->
+      <div class="cart-drawer-footer" id="cartFooter">
+        <!-- Coupon input -->
+        <div class="coupon-box">
+          <div class="coupon-input-group">
+            <i class="fa-solid fa-tag coupon-icon"></i>
+            <input type="text" id="couponInput" placeholder="Promo code (e.g. CODEALPHA20)" style="text-transform: uppercase;">
+            <button id="applyCouponBtn" class="btn btn-sm btn-secondary">Apply</button>
+          </div>
+          <p id="couponFeedback" class="coupon-feedback"></p>
+        </div>
+
+        <!-- Bill Breakdown -->
+        <div class="order-summary-box">
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span id="cartSubtotalText">$0.00</span>
+          </div>
+          <div class="summary-line text-success" id="discountLine" style="display: none;">
+            <span>Discount (Promo)</span>
+            <span id="cartDiscountText">-$0.00</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span id="cartShippingText">$0.00</span>
+          </div>
+          <div class="summary-line">
+            <span>Estimated Tax (5%)</span>
+            <span id="cartTaxText">$0.00</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <span id="cartTotalText">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Checkout Actions -->
+        <div class="cart-action-buttons">
+          <button id="proceedCheckoutBtn" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-lock"></i> Proceed to Checkout
+          </button>
+          <button id="clearCartBtn" class="btn btn-ghost btn-block text-danger">
+            <i class="fa-solid fa-trash-can"></i> Clear Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Processing & Checkout Modal -->
+  <div id="checkoutModal" class="modal-backdrop">
+    <div class="modal-dialog modal-checkout">
+      <button class="modal-close-btn" onclick="closeCheckoutModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="checkout-header">
+        <div class="checkout-badge">Step 1 of 1</div>
+        <h2>Secure Order Checkout</h2>
+        <p>Complete your delivery and payment details to place your order.</p>
+      </div>
+
+      <div class="checkout-grid">
+        <!-- Left: Form -->
+        <form id="checkoutForm" class="checkout-form">
+          <h4 class="form-section-title"><i class="fa-solid fa-truck-ramp-box"></i> Shipping Destination</h4>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="shippingFullName">Full Name *</label>
+              <input type="text" id="shippingFullName" required placeholder="e.g. Manish Kumar">
+            </div>
+            <div class="form-group">
+              <label for="shippingPhone">Phone Number *</label>
+              <input type="tel" id="shippingPhone" required placeholder="e.g. +91 9876543210">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="shippingAddress">Street Address *</label>
+            <input type="text" id="shippingAddress" required placeholder="Flat / House No., Sector, Street">
+          </div>
+
+          <div class="form-row three-cols">
+            <div class="form-group">
+              <label for="shippingCity">City *</label>
+              <input type="text" id="shippingCity" required placeholder="City">
+            </div>
+            <div class="form-group">
+              <label for="shippingZip">Postal / ZIP Code *</label>
+              <input type="text" id="shippingZip" required placeholder="e.g. 201301">
+            </div>
+            <div class="form-group">
+              <label for="shippingCountry">Country *</label>
+              <input type="text" id="shippingCountry" required value="India">
+            </div>
+          </div>
+
+          <h4 class="form-section-title" style="margin-top: 1.5rem;"><i class="fa-regular fa-credit-card"></i> Payment Method</h4>
+          
+          <div class="payment-methods-grid">
+            <label class="payment-radio-card active">
+              <input type="radio" name="paymentMethod" value="Credit Card" checked>
+              <div class="radio-content">
+                <i class="fa-brands fa-cc-visa"></i>
+                <span class="method-name">Card Payment</span>
+                <span class="method-sub">Visa, Mastercard, RuPay</span>
+              </div>
+            </label>
+            <label class="payment-radio-card">
+              <input type="radio" name="paymentMethod" value="PayPal">
+              <div class="radio-content">
+                <i class="fa-brands fa-paypal"></i>
+                <span class="method-name">PayPal</span>
+                <span class="method-sub">Express Wallet</span>
+              </div>
+            </label>
+            <label class="payment-radio-card">
+              <input type="radio" name="paymentMethod" value="Cash on Delivery">
+              <div class="radio-content">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span class="method-name">Cash on Delivery</span>
+                <span class="method-sub">Pay at doorstep</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Card mock inputs (visible when Card selected) -->
+          <div id="cardFieldsContainer" class="card-inputs-box">
+            <div class="form-group">
+              <label for="cardNumber">Card Number (Simulated)</label>
+              <input type="text" id="cardNumber" placeholder="4532 •••• •••• 8892" maxlength="19" value="4532 8920 1204 8892">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cardExpiry">Expiry Date</label>
+                <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" value="12/28">
+              </div>
+              <div class="form-group">
+                <label for="cardCvv">CVV</label>
+                <input type="password" id="cardCvv" placeholder="•••" maxlength="4" value="789">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="orderNotes">Order Notes / Delivery Instructions (Optional)</label>
+            <textarea id="orderNotes" rows="2" placeholder="e.g. Leave package with security guard or front desk"></textarea>
+          </div>
+
+          <div class="form-action-group">
+            <button type="submit" id="placeOrderSubmitBtn" class="btn btn-primary btn-block btn-lg">
+              <span id="placeOrderSpinner" class="spinner" style="display: none;"></span>
+              <span id="placeOrderBtnText"><i class="fa-solid fa-shield-check"></i> Complete & Place Order</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Right: Checkout Review Sidebar -->
+        <div class="checkout-review-sidebar">
+          <h4>Order Summary</h4>
+          <div id="checkoutItemsList" class="checkout-items-scroll">
+            <!-- Dynamically populated -->
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span id="coSubtotal">$0.00</span>
+          </div>
+          <div class="summary-line text-success" id="coDiscountLine" style="display: none;">
+            <span>Discount Applied</span>
+            <span id="coDiscount">-$0.00</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span id="coShipping">$0.00</span>
+          </div>
+          <div class="summary-line">
+            <span>Tax (5%)</span>
+            <span id="coTax">$0.00</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-line summary-total">
+            <span>Total Payable</span>
+            <span id="coTotal">$0.00</span>
+          </div>
+          <div class="checkout-security-notice">
+            <i class="fa-solid fa-lock"></i> 256-Bit Encrypted Simulated Checkout
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Confirmation Modal -->
+  <div id="orderSuccessModal" class="modal-backdrop">
+    <div class="modal-dialog modal-md">
+      <div class="order-success-content" id="orderSuccessBody">
+        <!-- Injected upon successful order -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders History Modal -->
+  <div id="ordersModal" class="modal-backdrop">
+    <div class="modal-dialog modal-xl">
+      <button class="modal-close-btn" onclick="closeOrdersModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="orders-modal-header">
+        <div class="header-icon-box">
+          <i class="fa-solid fa-boxes-packing"></i>
+        </div>
+        <div>
+          <h2>Order History & Tracking</h2>
+          <p>View your past purchases, order statuses, tracking updates, and download receipts.</p>
+        </div>
+      </div>
+      <div class="orders-list-container" id="ordersListContainer">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal (Login / Register) -->
+  <div id="authModal" class="modal-backdrop">
+    <div class="modal-dialog modal-auth">
+      <button class="modal-close-btn" onclick="closeAuthModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="auth-tabs">
+        <button id="tabLoginBtn" class="auth-tab-btn active" onclick="switchAuthTab('login')">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </button>
+        <button id="tabRegisterBtn" class="auth-tab-btn" onclick="switchAuthTab('register')">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </button>
+      </div>
+
+      <!-- Quick Demo Account Fillers -->
+      <div class="demo-accounts-pillbox">
+        <span class="pillbox-label">Quick 1-Click Login:</span>
+        <button type="button" class="quick-user-tag" onclick="quickFillAuth('manish_buyer', 'password123')">
+          <i class="fa-solid fa-user-check"></i> Manish Kumar
+        </button>
+        <button type="button" class="quick-user-tag" onclick="quickFillAuth('demo_user', 'password123')">
+          <i class="fa-solid fa-user"></i> Alex Carter
+        </button>
+        <button type="button" class="quick-user-tag" onclick="quickFillAuth('admin', 'admin123')">
+          <i class="fa-solid fa-user-shield"></i> Admin
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label for="loginIdentifier">Username or Email</label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" id="loginIdentifier" required placeholder="manish_buyer or email" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="loginPassword" required placeholder="Enter password" autocomplete="current-password">
+          </div>
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-block btn-lg">
+          <span id="loginBtnSpinner" class="spinner" style="display: none;"></span>
+          <span id="loginBtnText"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</span>
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form" style="display: none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="regFullName">Full Name *</label>
+            <input type="text" id="regFullName" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="regUsername">Username *</label>
+            <input type="text" id="regUsername" required placeholder="e.g. johndoe">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="regEmail">Email Address *</label>
+          <input type="email" id="regEmail" required placeholder="john@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="regPassword">Password (Min 6 chars) *</label>
+          <input type="password" id="regPassword" required minlength="6" placeholder="Choose a secure password">
+        </div>
+
+        <div class="form-group">
+          <label for="regAddress">Default Delivery Address</label>
+          <input type="text" id="regAddress" placeholder="Street, City, Postal Code">
+        </div>
+
+        <button type="submit" id="registerSubmitBtn" class="btn btn-primary btn-block btn-lg">
+          <span id="regBtnSpinner" class="spinner" style="display: none;"></span>
+          <span id="regBtnText"><i class="fa-solid fa-user-plus"></i> Create Account</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- User Profile Modal -->
+  <div id="profileModal" class="modal-backdrop">
+    <div class="modal-dialog modal-md">
+      <button class="modal-close-btn" onclick="closeProfileModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div>
+          <h3 id="profileName">User Profile</h3>
+          <p id="profileEmail" class="text-muted">user@example.com</p>
+          <span id="profileRoleBadge" class="badge">Customer</span>
+        </div>
+      </div>
+      <form id="profileForm" class="profile-form">
+        <div class="form-group">
+          <label for="profileInputName">Full Name</label>
+          <input type="text" id="profileInputName" required>
+        </div>
+        <div class="form-group">
+          <label for="profileInputPhone">Phone Number</label>
+          <input type="tel" id="profileInputPhone" placeholder="+91 9876543210">
+        </div>
+        <div class="form-group">
+          <label for="profileInputAddress">Shipping Address</label>
+          <textarea id="profileInputAddress" rows="2" placeholder="Your default street address"></textarea>
+        </div>
+        <div class="profile-stats-row">
+          <div class="pstat">
+            <span class="pstat-val" id="profileTotalOrders">0</span>
+            <span class="pstat-lbl">Orders Placed</span>
+          </div>
+          <div class="pstat">
+            <span class="pstat-val" id="profileTotalSpent">$0.00</span>
+            <span class="pstat-lbl">Lifetime Spend</span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Save Profile Details</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="store-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo sm">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <h3>AlphaStore</h3>
+          <p>A full-stack, responsive e-commerce web application engineered for the <strong>CodeAlpha Full Stack Web Development Internship</strong>.</p>
+        </div>
+        <div class="footer-links-col">
+          <h4>Internship Deliverables</h4>
+          <ul>
+            <li><i class="fa-solid fa-check text-success"></i> Dynamic Product Catalog</li>
+            <li><i class="fa-solid fa-check text-success"></i> Product Details & Reviews</li>
+            <li><i class="fa-solid fa-check text-success"></i> Persistent Cart Sync</li>
+            <li><i class="fa-solid fa-check text-success"></i> Order Processing & Invoicing</li>
+            <li><i class="fa-solid fa-check text-success"></i> JWT Authentication & SQLite</li>
+          </ul>
+        </div>
+        <div class="footer-links-col">
+          <h4>Developer & Verification</h4>
+          <ul>
+            <li><strong>Intern:</strong> Manish Kumar</li>
+            <li><strong>Email:</strong> manishkumar17all@gmail.com</li>
+            <li><strong>Organization:</strong> CodeAlpha</li>
+            <li><strong>Task:</strong> Task 1 — Simple E-commerce Store</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 CodeAlpha Internship Project. Built with HTML, CSS, JavaScript, Express.js & SQLite.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
